@@ -18,6 +18,7 @@ class VerticalModelEvaluator(ABC):
         self.surrogate_model = surrogate_model
         self.minimal_anchor = minimal_anchor
         self.final_anchor = final_anchor
+        self.anchors = []
 
     def evaluate_model(self, best_so_far: float, configuration: typing.Dict) -> typing.List[float]:
         raise NotImplemented()
