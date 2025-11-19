@@ -76,20 +76,20 @@ class LCCV(VerticalModelEvaluator):
         the tuple consists of two elements: the anchor size and the estimated
         performance.
         """
+        print(self.anchors, self.final_anchor)
         results_list: typing.List[typing.Tuple[int, float]] = []
-        # Case 1: No previous best. Evaluate on the full dataset.
+        # If there is no previous best, we simply evaluate on the full dataset.
         if best_so_far is None:
-            # self.final_anchor is inherited from VerticalModelEvaluator
+            # self.final_anchor is defined in VerticalModelEvaluator
             performance = self.surrogate_model.predict(configuration, self.final_anchor)
             results_list.append((self.final_anchor, performance))
             return results_list
 
-        # We have a 'best_so_far' and maybe need to prune.
+        # We have a 'best_so_far' and maybe need to cut off early
         # self.anchors is defined in VerticalModelEvaluator (just by doubling sizes)
         for i, current_anchor in enumerate(self.anchors):
             current_perf = self.surrogate_model.predict(configuration, current_anchor)
             results_list.append((current_anchor, current_perf))
-
             # We need at least two points to extrapolate (i > 0)
             if i > 0:
                 previous_anchor = self.anchors[i-1]
@@ -105,11 +105,11 @@ class LCCV(VerticalModelEvaluator):
                 )
 
                 # Pruning Check:
-                # We assume lower is better (e.g., error rate).
-                # If the "optimistic" prediction is *still worse* than the
-                # best we've already found, stop.
+                # lower is better (error rate).
+                # If the "optimistic" prediction is worse than the
+                # best we've found, stop.
                 if extrapolated_perf >= best_so_far:
-                    logging.info(f"Pruning config. Extrapolated: {extrapolated_perf:.4f} >= Best: {best_so_far:.4f}")
+                    logging.info(f"Pruning config at {current_anchor}. Extrapolated: {extrapolated_perf:.4f} >= Best: {best_so_far:.4f}")
                     # Stop early and return the results we have so far
                     return results_list
     
