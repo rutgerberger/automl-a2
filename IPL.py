@@ -87,9 +87,9 @@ class IPL(VerticalModelEvaluator):
         observed_errors = []
         stopped_at_anchor = None
         
-        print(f"Evaluating configuration")
-        print(f"Anchor schedule: {self.anchors}")
-        print(f"Target size: {self.max_anchor_size}")
+        # print(f"Evaluating configuration")
+        # print(f"Anchor schedule: {self.anchors}")
+        # print(f"Target size: {self.max_anchor_size}")
         
         for i, anchor in enumerate(self.anchors):
             try:
@@ -98,7 +98,7 @@ class IPL(VerticalModelEvaluator):
                 observed_anchors.append(anchor)
                 observed_errors.append(error)
                 
-                print(f"  Anchor {anchor}: error = {error:.4f}")
+                # print(f"  Anchor {anchor}: error = {error:.4f}")
                 
                 # Check if we have enough points to start extrapolation
                 if len(observed_errors) >= 3:
@@ -108,12 +108,12 @@ class IPL(VerticalModelEvaluator):
                     # Predict error at max anchor size for this dataset
                     predicted_error = self.ipl_model(self.max_anchor_size, a, b, c)
                     
-                    print(f"    IPL prediction at {self.max_anchor_size}: {predicted_error:.4f} (best: {self.best_error:.4f})")
+                    # print(f"    IPL prediction at {self.max_anchor_size}: {predicted_error:.4f} (best: {self.best_error:.4f})")
                     
                     # Early stopping decision
                     margin = 0.01  # 1% margin to avoid being too aggressive
                     if predicted_error > self.best_error + margin:
-                        print(f"    → DISCARDING: predicted too high")
+                        # print(f"    → DISCARDING: predicted too high")
                         stopped_at_anchor = anchor
                         
                         self.evaluation_history.append({
@@ -138,13 +138,13 @@ class IPL(VerticalModelEvaluator):
             # Not enough points for reliable extrapolation
             final_prediction = observed_errors[-1]
         
-        print(f"  Final prediction: {final_prediction:.4f}")
+        # print(f"  Final prediction: {final_prediction:.4f}")
         
         # Update best error if improved
         if final_prediction < self.best_error:
             old_best = self.best_error
             self.best_error = final_prediction
-            print(f"  → NEW BEST ERROR: {final_prediction:.4f} (improved from {old_best:.4f})")
+            # print(f"  → NEW BEST ERROR: {final_prediction:.4f} (improved from {old_best:.4f})")
         
         self.evaluation_history.append({
             'configuration': configuration,
