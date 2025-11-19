@@ -23,7 +23,7 @@ class LCCV(VerticalModelEvaluator):
         while current_anchor < final_anchor:
             anchors.append(current_anchor)
             current_anchor *= 2 
-        # Ensure the final anchor is always the last item
+        # Ensure the max anchor is always the last item
         if final_anchor not in anchors:
             anchors.append(final_anchor)
         self.anchors = anchors
@@ -54,7 +54,7 @@ class LCCV(VerticalModelEvaluator):
         s_t_minus_1 = previous_anchor
         s_T = target_anchor
         if (s_t_minus_1 - s_t) == 0:
-            logging.warning("Previous and current anchors are the same. Cannot extrapolate.")
+            #logging.warning("Previous and current anchors are the same. Cannot extrapolate.")
             return C_t
         slope = (C_t_minus_1 - C_t) / (s_t_minus_1 - s_t)
         extrapolated_performance = C_t + (s_T - s_t) * slope
@@ -76,7 +76,7 @@ class LCCV(VerticalModelEvaluator):
         the tuple consists of two elements: the anchor size and the estimated
         performance.
         """
-        print(self.anchors, self.final_anchor)
+        #print(self.anchors, self.final_anchor)
         results_list: typing.List[typing.Tuple[int, float]] = []
         # If there is no previous best, we simply evaluate on the full dataset.
         if best_so_far is None:
@@ -109,7 +109,7 @@ class LCCV(VerticalModelEvaluator):
                 # If the "optimistic" prediction is worse than the
                 # best we've found, stop.
                 if extrapolated_perf >= best_so_far:
-                    logging.info(f"Pruning config at {current_anchor}. Extrapolated: {extrapolated_perf:.4f} >= Best: {best_so_far:.4f}")
+                    #logging.info(f"Pruning config at {current_anchor}. Extrapolated: {extrapolated_perf:.4f} >= Best: {best_so_far:.4f}")
                     # Stop early and return the results we have so far
                     return results_list
     
